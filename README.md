@@ -78,3 +78,73 @@
 
 ----
 
+## 퍼셉트론 API
+
+- 인공 뉴런
+  - 두 클래스가 있는 이진 분류 작업
+    - 1(양성 클래스)
+    - -1(음성 클래스)
+  - 입력 값 x와 가중치 벡터 w의 선형 조합으로 결정 함수 ?(z)를 정의한다.
+  - 따라서 z = 가중치 벡터 w 와 입력 값 x의 곱을 처음부터 m까지의 합으로 나타난다.
+  - 임계 값(θ)를 지정하고 결정 함수 ?(z)가 임계 값보다 크거나 같을 경우 양성 클래스로 작을 경우 음성 클래스로 지정한다.
+  - 퍼셉트론 알고리즘에서 결정 함수 ?(z)는 단위  계단 함수를 변형한 것이다.
+  - 위 식을 간단하게 만들기 위해서 가중치 벡터의 첫번째를 -θ, 첫번째 입력 값을 0으로 정의하고 가중치 벡터를 행 벡터로 변환하여 계산하면 결국 결정 함수가 0보다 크거나 같을경우 양성 클래스 작을 경우 음성 클래스로 정의됩니다.
+<img src = "퍼셉트론 결정함수.png">
+  - 퍼셉트론 알고리즘에서 입력 값 x는 자료에 의한 정보이고 가중치 벡터 w에 따라 결과 값의 정확성이 나눠지기 때문에 가중치 벡터 w를 잘 구하는 것이 알고리즘의 정확성에 직접적인 영향을 준다.
+    - 가중치 벡터 w를 즉 기준점을 잘 잡기 위해서는 다음과 같은 학습 규칙을 따르는 것이 좋다.
+    - 학습 규칙: q = n(y - y')x 
+    - q: 개별 가중치 벡터의 변화량
+    - n: 학습률(0.0 ~ 1.0사이 실수)
+    - y: 특정 번호에 있는 진짜 클래스 레이블
+    - y': 예측 클래스 레이블
+    - 위 식을 따르면 정확한 예측이 이뤄진 경우 가중치가 변경되지 않고 그대로 유지된다 즉 업데이트 값은 0이 된다.
+  <img src="예측 성공 데이터셋과 그렇지 못한 데이터셋.PNG">
+   - 첫 번째 그래프는 예측 성공하여 선형 결정 경계로 잘 나눠진 데이터셋을 보여주고 나머지 그래프는 그렇지 못한 그래프를 보여주고 있다, 오른쪽 두개의 그래프와 같은 알고리즘에서 훈련 데이터셋의 반복 최대 횟수를 지정하지 않을 경우 퍼셉트론 알고리즘에서는 업데이트 가중치는 멈추지 않는다.
+  <img src="퍼셉트론 알고리즘 그림 이론.PNG">
+  - 퍼셉트론 알고리즘의 이론상 작동 그림을 보여주고 있다.
+  
+  - 퍼셉트로 알고리즘
+  ```Python
+  import numpy as np
+  # numpy: C언어로 구현된 파이썬 라이브러리로 벡터 및 행렬 연산시 유용하게 사용된다.
+  class Perceptron(object):
+
+    def __init__(self, eta=0.01, n_iter=50, random_state=1):
+        self.eta = eta
+        self.n_iter = n_iter
+        self.random_state = random_state
+  # def: 클래스 내부 함수인 메서드 정의
+  # self: 객체의 인스턴스 그자체, 자기 자신을 참조하는 매개변수
+    def fit(self, X, y):
+    # 훈련 데이터 학습 매서드
+        rgen = np.randem.RandomState(self.random_state)
+        # 난수발생기로 난수를 random-state로 초기화 시킨다
+        self.w_ + rgen.normal(loc=0.0, scale=0.01,
+                              size=1 + X.shape[1])
+                              #X.shape[1]: 절편의 값이 있기 때문에 크기를 1만큼 증가한다
+        self.errors_ = [ ]
+        # errors 리스트 생성
+        for _ in range(self.n_iter):
+            errors = 0
+            for xi, target in zip(X, y):
+            # zip 함수: x와y의 값을 하나씩 xi, target에 저장한다  
+                update = self.eta * (target - self.predict(xi))
+                # self.predict(xi): 예측 가중치 설정
+                self.w_[1:] += update * xi
+                # 가중치 1부터는 변화
+                self.w_[0] += update
+                # x의 첫번째 입력값은 1
+                errors += int(update != 0.0)
+                # 업데이트 값이 0.0이 아닐 경우 즉 타깃 정확도가 떨어질 경우
+            self.errors_.append(errors)
+            # append 함수를 이용하여 리스트에 요소를 추가한다
+        return self
+
+    def net_input(self, X):
+      # 입력 계산
+        return np.dot(X, self.w_[1:]) + self.w_[0]
+
+    def predict(self, X):
+      # 단위 계단 함수를 사용하여 클래스 레이블을 반환한다
+        return np.where(self.net_input(X) >= 0.0, 1, -1)
+  ```
