@@ -1,5 +1,6 @@
 # AI-Learning
- 
+ ## 코드 오류 검사는 파이참을 이용하였고, 실행은 주피터 노트북을 이용하였습니다.
+ ---
  ## Machine Learning
 
  - 주요 단어
@@ -148,3 +149,62 @@
       # 단위 계단 함수를 사용하여 클래스 레이블을 반환한다
         return np.where(self.net_input(X) >= 0.0, 1, -1)
   ```
+  ```Python
+  v1 = np.array([1, 2, 3])
+  v2 = 0.5 * v1
+  np.arccos(v1.dot(v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)))
+  # np.arccos: 역코사인 삼각 함수
+  # np.linalg.norm: 벡터 길이를 계산하는 함수
+  ```
+  퍼셉트론 알고리즘을 입력한 후 위 알고리즘을 실행하면 업데이트 값이 0이 출력되는 것을 볼 수 있다, 이는 즉 정확하다는 의미입니다.
+
+  ```Python
+  import os
+  import pandas as pd
+  #pandas: 데이터분석을 위한 파이썬 라이브러리
+  s = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+  print('URL:', s)
+  df = pd.read_csv(s, header=None, encoding='utf-8')
+  #pd.read_csv: 경로를 병합하여 새 경로를 생성한다
+  df.tail()
+  #tail(n): 많은 데이터를 밑에서부터 n개 만큼 잘라서 출력한다, 만약 ()의 입력이 없을 경우 5로 자동 입력된다.
+  ```
+  위 코드의 출력 결과는 다음과 같다.
+
+  <img src="붓꽃 데이터셋.PNG">
+
+   - 위 그림에서 0,1,2,3은 특성을 나타낸다.
+   - 위 그림에서 4는 타깃값을 나타낸다.
+
+```Python
+import matplotlib.pyplot as plt
+# 차트나 플롯을 그리기 위한 라이브러리 패키지
+import numpy as np
+
+y = df.iloc[0:100, 4].values
+#df.iloc[n:m, x]: 리스트의 n행과 m열 중에서 x개의 데이터를 추룰하는 함수
+y = np.where(y == 'Iris-setosa', -1, 1)
+#np.where: numpy 라이브러리의 함수로 Iris-setosa일 경우 -1 그 외의 경우 1로 간주한다
+
+X = df.iloc[0:100, [0, 2]].values
+
+plt.scatter(X[:50, 0], X[:50, 1],
+            color='red', marker='o', label='setosa')
+plt.scatter(X[50:100, 0], X[50:100, 1],
+            color='blue', marker='x', label='versicolor')
+#plt.scatter: setosa와 versicolor을 구분하여 범위를 지정한다.
+
+plt.xlabel('sepal length [cm]')
+plt.ylabel('petal length [cm]')
+plt.legend(loc='upper left')
+
+# plt.savefig('images/02_06.png', dpi=300)
+plt.show()
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img src="붓꽃 데이터셋100.PNG">
+
+- 붓꽃 데이터셋 150개 중 100개를 추출한 데이터셋의 산점도를 그린것이다, 위 그림을 보면 선형 결정 경계로 두 데이터셋을 나눌수 있다는 것을 볼 수 있다.
+
