@@ -208,3 +208,65 @@ plt.show()
 
 - 붓꽃 데이터셋 150개 중 100개를 추출한 데이터셋의 산점도를 그린것이다, 위 그림을 보면 선형 결정 경계로 두 데이터셋을 나눌수 있다는 것을 볼 수 있다.
 
+```Python
+ppn = Perceptron(eta=0.1, n_iter=10)
+
+ppn.fit(X, y)
+
+plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Number of updates')
+
+# plt.savefig('images/02_07.png', dpi=300)
+plt.show()
+```
+<img src="10회 반복.PNG">
+
+ - Perceptron 알고리즘을 이용하여 10회 반복을 통해 결과값을 비교해본 결과 6해부터 0으로 
+값이 일정하다는 것을 볼 수 있다.
+
+```Python
+from matplotlib.colors import ListedColormap
+
+
+def plot_decision_regions(X, y, classifier, resolution=0.02):
+
+    # 마커와 컬러맵을 설정합니다
+    markers = ('s', 'x', 'o', '^', 'v')
+    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+    cmap = ListedColormap(colors[:len(np.unique(y))])
+
+    # 결정 경계를 그립니다
+    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1  # 꽃받침 길이 최소/최대
+    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1  # 꽃잎 길이 최소/최대
+    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+                           np.arange(x2_min, x2_max, resolution))
+    Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+    Z = Z.reshape(xx1.shape)
+    plt.contourf(xx1, xx2, Z, alpha=0.3, cmap=cmap)
+    plt.xlim(xx1.min(), xx1.max())
+    plt.ylim(xx2.min(), xx2.max())
+
+    # 샘플의 산점도를 그립니다
+    for idx, cl in enumerate(np.unique(y)):
+        plt.scatter(x=X[y == cl, 0], 
+                    y=X[y == cl, 1],
+                    alpha=0.8, 
+                    c=colors[idx],
+                    marker=markers[idx], 
+                    label=cl, 
+                    edgecolor='black')
+```
+```Python
+plot_decision_regions(X, y, classifier=ppn)
+plt.xlabel('sepal length [cm]')
+plt.ylabel('petal length [cm]')
+plt.legend(loc='upper left')
+
+# plt.savefig('images/02_08.png', dpi=300)
+plt.show()
+```
+
+<img src = "선형 분산도.PNG">
+
+- 위 알고리즘에서 선형 분산도의 데이터 샘플들이 확실히 나눠지는 결정 경계를 그립니다.
