@@ -210,14 +210,16 @@ plt.show()
 
 ```Python
 ppn = Perceptron(eta=0.1, n_iter=10)
-
+# Perceptron 알고리즘 동기화 객체 생성, 반복횟수: 10회
 ppn.fit(X, y)
 
 plt.plot(range(1, len(ppn.errors_) + 1), ppn.errors_, marker='o')
+# 그래프 그리는 matplotlib.pyplot 함수
+# ppn.errors: 매 반복 횟수 마다 오류난 획수
+# range: ppn.errors_: 10회 반복했으므로 10, range의 범위 끝 부분은 -1 이기때문에 +1을 해준다.
 plt.xlabel('Epochs')
 plt.ylabel('Number of updates')
 
-# plt.savefig('images/02_07.png', dpi=300)
 plt.show()
 ```
 <img src="10회 반복.PNG">
@@ -231,24 +233,32 @@ from matplotlib.colors import ListedColormap
 
 def plot_decision_regions(X, y, classifier, resolution=0.02):
 
-    # 마커와 컬러맵을 설정합니다
     markers = ('s', 'x', 'o', '^', 'v')
+    # 각 객체를 마크하기 위한 모양 설정
     colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+    # 각 분류들의 색을 표시하기 위한 색상
     cmap = ListedColormap(colors[:len(np.unique(y))])
+    # cmap: color map에서 색상을 선태갛여 len(np.nuiaue(y))만큼 색상의 개수를 선택한다.
+    # 현재 퍼셉트론 알고리즘의 데이터는 이진부류 이지만 다른 경우를 위해 여러가지의 마크와 색상을 미리 저장해 둔다.
 
-    # 결정 경계를 그립니다
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1  # 꽃받침 길이 최소/최대
     x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1  # 꽃잎 길이 최소/최대
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
                            np.arange(x2_min, x2_max, resolution))
+    #np.meshgrid: 정해준 범위 내의 모든 x, y값을 반환해주는 함수
     Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+    # ravel(): 다차원 배열을 1차원 배열로 나열해주는 함수
+    #predict(): 데이터를 1, 0으로 분류해주는 함수
     Z = Z.reshape(xx1.shape)
     plt.contourf(xx1, xx2, Z, alpha=0.3, cmap=cmap)
+    #plt.contourf: 값에 따른 등고선을 그리는 함수
     plt.xlim(xx1.min(), xx1.max())
     plt.ylim(xx2.min(), xx2.max())
 
     # 샘플의 산점도를 그립니다
     for idx, cl in enumerate(np.unique(y)):
+      # enumerate: 반복문의 반복 횟수를 알려주는 함수
+      # np.unique(): 다차원 배열을 1차원 배열로 나열하기 위한 함수
         plt.scatter(x=X[y == cl, 0], 
                     y=X[y == cl, 1],
                     alpha=0.8, 
