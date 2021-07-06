@@ -1,7 +1,7 @@
 # AI-Learning
  ## 코드 오류 검사는 파이참을 이용하였고, 실행은 주피터 노트북을 이용하였습니다.
  ---
- ## Machine Learning
+> ## Machine Learning
 
  - 주요 단어
    -  지도 학습(Supervised Learning)
@@ -79,7 +79,7 @@
 
 ----
 
-## 퍼셉트론 API
+> ## 퍼셉트론 API
 
 - 인공 뉴런
   - 두 클래스가 있는 이진 분류 작업
@@ -280,3 +280,72 @@ plt.show()
 <img src = "선형 분산도.PNG">
 
 - 위 알고리즘에서 선형 분산도의 데이터 샘플들이 확실히 나눠지는 결정 경계를 그립니다.
+
+> ## 적응형 선형 뉴런
+
+- 아달린(Adaline) vs 퍼셉트론 알고리즘
+  - 페섭트론 알고리즘은 진짜 클래스 레이블과 예측 클래스 레이블을 비교하여 오차가 생길 경우 가중치 값을 업데이트 합니다.
+  - 아달린의 경우 진짜 클래스 레이블과 선형 활성화 함수의 실수 출력 값을 비교하여 모델의 오차를 계산하고 가중치를 업데이트 합니다.
+
+- 경사 하강법
+  - 함수의 기울기를 구하여 기울기가 낮은 쪽으로 계속 이동시켜 최정값에 이를 떄까지 반복하는 방법
+
+- 아달린 알고리즘
+```Python
+class AdalineGD(object):
+
+    def __init__(self, eta=0.01, n_iter=50, random_state=1):
+        self.eta = eta
+        self.n_iter = n_iter
+        self.random_state = random_state
+    """
+    eta: 학습률
+    n_iter: 훈련 데이터셋 반복 횟수
+    random_satate: 가중치 무작위 초기화를 위한 난수 생성기
+    """
+    def fit(self, X, y):
+
+        rgen = np.random.RandomState(self.random_state)
+        self.w_ = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1])
+        self.cost_ = []
+
+        for i in range(self.n_iter):
+            net_input = self.net_input(X)
+            output = self.activation(net_input)
+            errors = (y - output)
+            self.w_[1:] += self.eta * X.T.dot(errors)
+            self.w_[0] += self.eta * errors.sum()
+            cost = (errors**2).sum() / 2.0
+            self.cost_.append(cost)
+        return self
+
+    def net_input(self, X):
+        return np.dot(X, self.w_[1:]) + self.w_[0]
+
+    def activation(self, X):
+        return X
+
+    def predict(self, X):
+        return np.where(self.activation(self.net_input(X)) >= 0.0, 1, -1)
+```
+
+```Python
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))
+
+ada1 = AdalineGD(n_iter=10, eta=0.01).fit(X, y)
+ax[0].plot(range(1, len(ada1.cost_) + 1), np.log10(ada1.cost_), marker='o')
+ax[0].set_xlabel('Epochs')
+ax[0].set_ylabel('log(Sum-squared-error)')
+ax[0].set_title('Adaline - Learning rate 0.01')
+
+ada2 = AdalineGD(n_iter=10, eta=0.0001).fit(X, y)
+ax[1].plot(range(1, len(ada2.cost_) + 1), ada2.cost_, marker='o')
+ax[1].set_xlabel('Epochs')
+ax[1].set_ylabel('Sum-squared-error')
+ax[1].set_title('Adaline - Learning rate 0.0001')
+
+plt.show()
+```
+
+
+
