@@ -308,6 +308,7 @@ class AdalineGD(object):
         rgen = np.random.RandomState(self.random_state)
         self.w_ = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1])
         self.cost_ = []
+        # self: fit 클래스에 정의된 인스턴스
 
         for i in range(self.n_iter):
             net_input = self.net_input(X)
